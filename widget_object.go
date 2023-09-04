@@ -32,7 +32,7 @@ func (o *BaseWidgetObject) SetWidget(v *WidgetComponent) {
 
 // Widget implements WidgetObject.
 func (o *BaseWidgetObject) Widget() *WidgetComponent {
-	return o.Widget()
+	return o.widget
 }
 
 // SetTree implements WidgetObject.

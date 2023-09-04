@@ -10,31 +10,30 @@ import (
 var _ Component = (*WidgetComponent)(nil)
 
 type IWidget interface {
+	Bind(wcom *WidgetComponent)
+
 	goapp_commons.Disposable
 
-	GetContent(wcom *WidgetComponent) fyne.CanvasObject
+	GetContent() fyne.CanvasObject
 
-	RefreshState(wcom *WidgetComponent)
+	RefreshState()
 }
 
 type WidgetComponent struct {
 	noc.BaseComponent
-	comtype string
-	widget  IWidget
-	tree    *noc.TreeItemComponent
+	widget IWidget
+	tree   *noc.TreeItemComponent
 }
 
-func NewWidgetComponent(comtype string, w IWidget) *WidgetComponent {
-	if comtype == "" {
-		panic("invalid comtype")
-	}
+func NewWidgetComponent(w IWidget) *WidgetComponent {
 	if w == nil {
 		panic("invalid IWidget")
 	}
-	return &WidgetComponent{
-		comtype: comtype,
-		widget:  w,
+	o := &WidgetComponent{
+		widget: w,
 	}
+	w.Bind(o)
+	return o
 }
 
 func (o *WidgetComponent) GetWidget() IWidget {
@@ -43,6 +42,19 @@ func (o *WidgetComponent) GetWidget() IWidget {
 
 func (o *WidgetComponent) GetTree() *noc.TreeItemComponent {
 	return o.tree
+}
+
+func (o *WidgetComponent) GetContent() fyne.CanvasObject {
+	if o.widget != nil {
+		return o.widget.GetContent()
+	}
+	return nil
+}
+
+func (o *WidgetComponent) RefreshState(wcom *WidgetComponent) {
+	if o.widget != nil {
+		o.widget.RefreshState()
+	}
 }
 
 func (th *WidgetComponent) OnInit() error {
